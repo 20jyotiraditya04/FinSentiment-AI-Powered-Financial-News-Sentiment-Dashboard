@@ -1,77 +1,91 @@
-# FinSentiment-AI-Powered-Financial-News-Sentiment-Dashboard
+FinSentiment: AI-Powered Financial News Sentiment Dashboard
 A modern, interactive web dashboard for financial news analysis, powered by state-of-the-art AI, NLP, and real-time data visualization.
 
 🚀 Features
-1. User Authentication
-Secure user registration and login using Flask-Login.
+User Authentication
 
-Passwords are hashed for safety.
+Secure registration and login (Flask-Login)
 
-Each user gets a personalized dashboard experience.
+Passwords are hashed for safety
 
-2. Live Financial News Aggregation
-Fetches the latest business and financial news headlines using APIs.
+Personalized dashboard experience
 
-News is deduplicated and enriched for better insights.
+Live Financial News Aggregation
 
-3. AI-Powered Sentiment Analysis
-Each news headline is analyzed using NLTK’s VADER sentiment analyzer.
+Fetches the latest business and financial news headlines using APIs
 
-Headlines are labeled as Positive, Negative, or Neutral.
+News is deduplicated and enriched for better insights
 
-Sentiment confidence scores are displayed as animated progress bars.
+AI-Powered Sentiment Analysis
 
-4. AI-Generated News Summaries
-Uses HuggingFace’s BART transformer to generate concise, readable summaries of the latest news and sentiment.
+Each headline analyzed with NLTK’s VADER
 
-Summaries are displayed at the top of the dashboard for quick insights.
+Labeled as Positive, Negative, or Neutral
 
-5. AI-Generated Trend & Risk Insights
-Extracts and summarizes key risks, bullish/bearish drivers, and noteworthy events from the news flow using an LLM.
+Sentiment confidence scores shown as animated progress bars
 
-Presents these insights as bullet points for fast decision-making.
+AI-Generated News Summaries
 
-6. Interactive Stock Price Charts
-Users can enter any stock ticker (e.g., AAPL, TSLA, GOOGL).
+Uses HuggingFace’s BART transformer for concise summaries
 
-Interactive Plotly charts display 5-year historical price data.
+Summaries shown at the top of the dashboard
 
-Chart titles and axes update dynamically with the selected ticker.
+AI-Generated Trend & Risk Insights
 
-7. Key Fundamentals Display
-Shows important company data: market cap, sector, industry, P/E ratios, open/high/low/prev close.
+Extracts and summarizes key risks, drivers, and events using LLMs
 
-Data is fetched live using yfinance.
+Insights presented as bullet points for fast decision-making
 
-8. Sector/Peer Sentiment Comparison
-Automatically detects the sector of the selected stock.
+Interactive Stock Price Charts
 
-Calculates and displays the average sentiment for the sector.
+Enter any stock ticker (e.g., AAPL, TSLA, GOOGL)
 
-Compares the selected stock’s sentiment to its sector average with color-coded feedback.
+Interactive Plotly charts display 5-year historical price data
 
-9. Responsive, Animated UI
-Built with Bootstrap 5 and Animate.css for a modern, mobile-friendly look.
+Chart titles and axes update dynamically
 
-All charts and tables feature smooth transitions and animations.
+Key Fundamentals Display
 
-10. Advanced Filtering
-Filter news by sentiment (Positive/Negative/Neutral), keyword, or ticker.
+Shows company data: market cap, sector, industry, P/E ratios, open/high/low/prev close
 
-Instantly updates the dashboard based on user selection.
+Data fetched live using yfinance
 
-11. Enriched News Table
-Each news item displays extracted named entities (companies, people, etc.) and keywords.
+Sector/Peer Sentiment Comparison
 
-Sentiment confidence for each headline is visualized.
+Detects sector of the selected stock
 
-12. Error Handling & User Feedback
-Graceful handling of missing data (e.g., invalid ticker, no news).
+Calculates and displays sector average sentiment
 
-Informative flash messages for user actions and errors.
+Compares stock’s sentiment to sector average with color-coded feedback
+
+Responsive, Animated UI
+
+Built with Bootstrap 5 and Animate.css
+
+Mobile-friendly and visually appealing
+
+Advanced Filtering
+
+Filter news by sentiment, keyword, or ticker
+
+Dashboard updates instantly
+
+Enriched News Table
+
+Displays extracted entities and keywords for each news item
+
+Visualizes sentiment confidence
+
+Error Handling & User Feedback
+
+Handles missing data gracefully (e.g., invalid ticker, no news)
+
+Informative flash messages for actions and errors
 
 📸 Screenshots
-![image](https://github.com/user-attachments/assets/5ac41e6b-ac36-4707-9f28-da4cac66019b)
+![image](https://github.com/user-attachments/assets/a17b4427-099d-49a6-86c0-63dbed5fd4a3)
+![image](https://github.com/user-attachments/assets/0721cd9e-9d40-4234-9244-b3014c3487e6)
+![image](https://github.com/user-attachments/assets/d37a6ed8-e9ae-4a04-a725-a27f50b01ee1)
 
 
 🛠️ Tech Stack
@@ -112,7 +126,7 @@ FinSentiment/
 Clone the repository
 
 bash
-git clone https://github.com/yourusername/FinSentiment.git
+git clone https://github.com/20jyotiraditya04/FinSentiment-AI-Powered-Financial-News-Sentiment-Dashboard.git
 cd FinSentiment
 Create and activate a virtual environment
 
