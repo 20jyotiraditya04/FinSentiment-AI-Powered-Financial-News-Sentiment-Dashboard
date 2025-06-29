@@ -1,5 +1,5 @@
-FinSentiment: AI-Powered Financial News Sentiment Dashboard
-A modern, interactive web dashboard for financial news analysis, powered by state-of-the-art AI, NLP, and real-time data visualization.
+##FinSentiment: AI-Powered Financial News Sentiment Dashboard
+#A modern, interactive web dashboard for financial news analysis, powered by state-of-the-art AI, NLP, and real-time data visualization.
 
 🚀 Features
 User Authentication
