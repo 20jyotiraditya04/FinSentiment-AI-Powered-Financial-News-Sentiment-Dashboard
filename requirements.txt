@@ -1,0 +1,12 @@
+flask
+flask-login
+flask-wtf
+flask-sqlalchemy
+flask-migrate
+email-validator
+werkzeug
+requests
+nltk
+spacy
+transformers
+torch

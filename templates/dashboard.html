@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="animate__animated animate__fadeIn">Live News Sentiment Dashboard</h1>
+
+<!-- AI-Powered News Summary -->
+{% if summary_text %}
+<div class="alert alert-info my-4 animate__animated animate__fadeIn">
+    <strong>AI Summary:</strong> {{ summary_text }}
+</div>
+{% endif %}
+
+<!-- AI-Generated Trend & Risk Insights -->
+{% if trend_risk_insights %}
+<div class="alert alert-warning my-4 animate__animated animate__fadeIn">
+    <strong>AI-Generated Trend & Risk Insights:</strong>
+    <ul>
+        {% for bullet in trend_risk_insights.split('\n') %}
+            {% if bullet.strip() %}
+                <li>{{ bullet.strip() }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<!-- Sector/Ticker Sentiment Comparison -->
+{% if sector and sector_avg_sentiment is not none and ticker_avg_sentiment is not none %}
+<div class="alert alert-secondary my-3 animate__animated animate__fadeIn">
+  <strong>Sector:</strong> {{ sector }}<br>
+  <strong>{{ ticker }} average sentiment:</strong> {{ ticker_avg_sentiment|round(2) }}<br>
+  <strong>Sector average sentiment:</strong> {{ sector_avg_sentiment|round(2) }}<br>
+  {% if ticker_avg_sentiment > sector_avg_sentiment %}
+    <span class="text-success">This stock's sentiment is <b>above</b> sector average.</span>
+  {% elif ticker_avg_sentiment < sector_avg_sentiment %}
+    <span class="text-danger">This stock's sentiment is <b>below</b> sector average.</span>
+  {% else %}
+    <span class="text-warning">This stock's sentiment is <b>equal</b> to the sector average.</span>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Ticker Selector and Filters -->
+<form method="get" class="row g-3 animate__animated animate__fadeInLeft">
+  <div class="col-auto">
+    <input type="text" name="ticker" class="form-control" placeholder="Ticker (e.g. AAPL)" value="{{ ticker }}">
+  </div>
+  <div class="col-auto">
+    <select name="sentiment" class="form-select">
+      <option value="">All Sentiments</option>
+      <option value="Positive" {% if request.args.get('sentiment') == 'Positive' %}selected{% endif %}>Positive</option>
+      <option value="Negative" {% if request.args.get('sentiment') == 'Negative' %}selected{% endif %}>Negative</option>
+      <option value="Neutral" {% if request.args.get('sentiment') == 'Neutral' %}selected{% endif %}>Neutral</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <input type="text" name="keyword" class="form-control" placeholder="Keyword" value="{{ request.args.get('keyword', '') }}">
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-primary mb-3">Show</button>
+  </div>
+</form>
+
+<!-- Stock Fundamentals Card -->
+<div class="card my-4 animate__animated animate__fadeIn">
+  <div class="card-body">
+    <h5 class="card-title">{{ fundamentals.longName }} ({{ ticker }})</h5>
+    <p class="card-text">
+      <strong>Sector:</strong> {{ fundamentals.sector }}<br>
+      <strong>Industry:</strong> {{ fundamentals.industry }}<br>
+      <strong>Market Cap:</strong> {{ fundamentals.marketCap }}<br>
+      <strong>P/E (Trailing):</strong> {{ fundamentals.trailingPE }}<br>
+      <strong>P/E (Forward):</strong> {{ fundamentals.forwardPE }}<br>
+      <strong>Open:</strong> {{ fundamentals.open }} |
+      <strong>High:</strong> {{ fundamentals.high }} |
+      <strong>Low:</strong> {{ fundamentals.low }} |
+      <strong>Prev Close:</strong> {{ fundamentals.previousClose }}
+    </p>
+  </div>
+</div>
+
+<!-- Interactive Price Chart -->
+<div id="stockPriceChart" style="width: 100%; max-width: 700px; margin: 0 auto 40px auto;"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    var priceChart = {{ price_chart_json|safe }};
+    Plotly.newPlot('stockPriceChart', priceChart.data, priceChart.layout);
+</script>
+
+<!-- Sentiment Pie Chart -->
+<div id="sentimentPie" class="animate__animated animate__zoomIn" style="width: 100%; max-width: 500px; margin: 0 auto 40px auto;"></div>
+<script>
+    var data = [{
+        values: [
+            {{ sentiment_counts["Positive"] if "Positive" in sentiment_counts else 0 }},
+            {{ sentiment_counts["Negative"] if "Negative" in sentiment_counts else 0 }},
+            {{ sentiment_counts["Neutral"] if "Neutral" in sentiment_counts else 0 }}
+        ],
+        labels: ['Positive', 'Negative', 'Neutral'],
+        type: 'pie'
+    }];
+    var layout = {
+        title: 'Sentiment Distribution',
+        height: 400
+    };
+    Plotly.newPlot('sentimentPie', data, layout);
+</script>
+
+<!-- Sentiment Alert -->
+{% if sentiment_counts['Negative'] > (sentiment_counts['Positive'] + sentiment_counts['Neutral']) %}
+<div class="alert alert-danger text-center animate__animated animate__shakeX" role="alert">
+    Warning: Negative sentiment is dominating the news!
+</div>
+{% endif %}
+
+<!-- News Table -->
+<div class="container mt-4 table-responsive">
+    <table class="table table-bordered table-hover table-striped align-middle animate__animated animate__fadeInUp">
+        <thead class="table-dark">
+            <tr>
+                {% for col in columns %}
+                    {% if col not in ['row_class', 'entities', 'keywords', 'pos', 'neu', 'neg'] %}
+                        <th>{{ col.replace('_', ' ').title() }}</th>
+                    {% endif %}
+                {% endfor %}
+                <th>Entities</th>
+                <th>Keywords</th>
+                <th>Sentiment Confidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in records %}
+            <tr class="animate__animated animate__fadeIn {{ row['row_class'] }}">
+                {% for col in columns %}
+                    {% if col not in ['row_class', 'entities', 'keywords', 'pos', 'neu', 'neg'] %}
+                        <td>{{ row[col] }}</td>
+                    {% endif %}
+                {% endfor %}
+                <td>
+                    {% for ent in row.get('entities', []) %}
+                        {{ ent[0] }} ({{ ent[1] }}){% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for kw in row.get('keywords', []) %}
+                        {{ kw }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: {{ (row['pos']*100)|round(1) }}%">
+                            {{ (row['pos']*100)|round(1) }}%
+                        </div>
+                        <div class="progress-bar bg-warning" role="progressbar"
+                             style="width: {{ (row['neu']*100)|round(1) }}%">
+                            {{ (row['neu']*100)|round(1) }}%
+                        </div>
+                        <div class="progress-bar bg-danger" role="progressbar"
+                             style="width: {{ (row['neg']*100)|round(1) }}%">
+                            {{ (row['neg']*100)|round(1) }}%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
