@@ -1,106 +1,101 @@
-##FinSentiment: AI-Powered Financial News Sentiment Dashboard##
-#A modern, interactive web dashboard for financial news analysis, powered by state-of-the-art AI, NLP, and real-time data visualization.
 
-🚀 Features
-User Authentication
+---
 
-Secure registration and login (Flask-Login)
+# 💹 FinSentiment: AI-Powered Financial News Sentiment Dashboard
 
-Passwords are hashed for safety
+A modern, interactive web dashboard for financial news analysis, powered by state-of-the-art AI, NLP, and real-time data visualization.
 
-Personalized dashboard experience
+---
 
-Live Financial News Aggregation
+## 🚀 Features
 
-Fetches the latest business and financial news headlines using APIs
+### 🔐 User Authentication
 
-News is deduplicated and enriched for better insights
+* Secure registration and login using **Flask-Login**
+* Passwords are securely **hashed**
+* Personalized dashboard for each user
 
-AI-Powered Sentiment Analysis
+### 📰 Live Financial News Aggregation
 
-Each headline analyzed with NLTK’s VADER
+* Fetches the **latest business/financial headlines** using news APIs
+* Intelligent **deduplication and enrichment** for better insights
 
-Labeled as Positive, Negative, or Neutral
+### 🧠 AI-Powered Sentiment Analysis
 
-Sentiment confidence scores shown as animated progress bars
+* Headlines analyzed using **NLTK’s VADER**
+* Labels: **Positive**, **Negative**, or **Neutral**
+* Confidence scores shown via **animated progress bars**
 
-AI-Generated News Summaries
+### ✍️ AI-Generated News Summaries
 
-Uses HuggingFace’s BART transformer for concise summaries
+* Uses **HuggingFace’s BART transformer** for concise summaries
+* Summaries displayed prominently on the dashboard
 
-Summaries shown at the top of the dashboard
+### 📊 AI-Generated Trend & Risk Insights
 
-AI-Generated Trend & Risk Insights
+* Extracts key **risks, events, and drivers** from headlines using LLMs
+* Presents insights as bullet points for quick decision-making
 
-Extracts and summarizes key risks, drivers, and events using LLMs
+### 📈 Interactive Stock Price Charts
 
-Insights presented as bullet points for fast decision-making
+* Search any ticker (e.g., `AAPL`, `TSLA`, `GOOGL`)
+* Displays **5-year historical price data** with Plotly
+* Dynamic titles and axes based on the selected stock
 
-Interactive Stock Price Charts
+### 🧾 Key Fundamentals Display
 
-Enter any stock ticker (e.g., AAPL, TSLA, GOOGL)
+* Shows: **market cap**, **sector**, **P/E ratios**, **daily highs/lows**, etc.
+* Live data pulled via **yfinance**
 
-Interactive Plotly charts display 5-year historical price data
+### 🔍 Sector/Peer Sentiment Comparison
 
-Chart titles and axes update dynamically
+* Auto-detects stock’s sector
+* Compares stock sentiment with **sector average**
+* Color-coded feedback based on comparison
 
-Key Fundamentals Display
+### 🎨 Responsive, Animated UI
 
-Shows company data: market cap, sector, industry, P/E ratios, open/high/low/prev close
+* Built using **Bootstrap 5** and **Animate.css**
+* Mobile-friendly and clean visual design
 
-Data fetched live using yfinance
+### 🧠 Advanced Filtering
 
-Sector/Peer Sentiment Comparison
+* Filter news by **sentiment**, **keyword**, or **ticker**
+* Dashboard updates instantly
 
-Detects sector of the selected stock
+### 📚 Enriched News Table
 
-Calculates and displays sector average sentiment
+* Shows extracted **entities and keywords**
+* Includes **sentiment confidence visualizations**
 
-Compares stock’s sentiment to sector average with color-coded feedback
+### ⚠️ Error Handling & Feedback
 
-Responsive, Animated UI
+* Handles missing or incorrect inputs gracefully
+* Provides **informative flash messages** for errors/actions
 
-Built with Bootstrap 5 and Animate.css
+---
 
-Mobile-friendly and visually appealing
+## 📸 Screenshots
 
-Advanced Filtering
+![Screenshot 1](https://github.com/user-attachments/assets/a17b4427-099d-49a6-86c0-63dbed5fd4a3)
+![Screenshot 2](https://github.com/user-attachments/assets/0721cd9e-9d40-4234-9244-b3014c3487e6)
+![Screenshot 3](https://github.com/user-attachments/assets/d37a6ed8-e9ae-4a04-a725-a27f50b01ee1)
 
-Filter news by sentiment, keyword, or ticker
+---
 
-Dashboard updates instantly
+## 🛠️ Tech Stack
 
-Enriched News Table
+**Backend:** Flask, Flask-Login, Flask-Migrate, SQLAlchemy
+**Frontend:** Bootstrap 5, Animate.css, Plotly.js
+**AI/NLP:** NLTK (VADER), HuggingFace Transformers (BART)
+**Data Sources:** yfinance, NewsData.io
+**Database:** SQLite (default)
 
-Displays extracted entities and keywords for each news item
+---
 
-Visualizes sentiment confidence
+## 🗂️ Project Structure
 
-Error Handling & User Feedback
-
-Handles missing data gracefully (e.g., invalid ticker, no news)
-
-Informative flash messages for actions and errors
-
-📸 Screenshots
-![image](https://github.com/user-attachments/assets/a17b4427-099d-49a6-86c0-63dbed5fd4a3)
-![image](https://github.com/user-attachments/assets/0721cd9e-9d40-4234-9244-b3014c3487e6)
-![image](https://github.com/user-attachments/assets/d37a6ed8-e9ae-4a04-a725-a27f50b01ee1)
-
-
-🛠️ Tech Stack
-Backend: Flask, Flask-Login, Flask-Migrate, SQLAlchemy
-
-Frontend: Bootstrap 5, Animate.css, Plotly.js
-
-AI/NLP: NLTK VADER, HuggingFace Transformers (BART)
-
-Data: yfinance, NewsData.io (or similar)
-
-Database: SQLite (default)
-
-🏗️ Project Structure
-text
+```
 FinSentiment/
 ├── app.py
 ├── routes.py
@@ -117,88 +112,114 @@ FinSentiment/
 │   ├── login.html
 │   └── register.html
 ├── static/
-│   └── (custom CSS, images, etc.)
+│   └── (CSS, images, JS)
 ├── instance/
 │   └── app.db
 ├── requirements.txt
 └── README.md
-⚡ Getting Started
-Clone the repository
+```
 
-bash
+---
+
+## ⚡ Getting Started
+
+### 1️⃣ Clone the Repository
+
+```bash
 git clone https://github.com/20jyotiraditya04/FinSentiment-AI-Powered-Financial-News-Sentiment-Dashboard.git
 cd FinSentiment
-Create and activate a virtual environment
+```
 
-bash
+### 2️⃣ Create & Activate Virtual Environment
+
+```bash
+# Windows
 python -m venv venv
-# Windows:
 venv\Scripts\activate
-# Mac/Linux:
+
+# macOS/Linux
+python3 -m venv venv
 source venv/bin/activate
-Install dependencies
+```
 
-bash
+### 3️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
-Set environment variables
+```
 
-bash
+### 4️⃣ Set Environment Variables
+
+```bash
 $Env:FLASK_APP = "app.py"
 $Env:FLASK_ENV = "development"
-Initialize the database
+```
 
-bash
+### 5️⃣ Initialize the Database
+
+```bash
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
-Run the app
+```
 
-bash
+### 6️⃣ Run the App
+
+```bash
 flask run
-Visit http://127.0.0.1:5000/ in your browser.
+```
 
-💡 Inspiration
-Yahoo Finance
+> Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
-Bloomberg Terminal
+---
 
-FinViz
+## 💡 Inspiration
 
-📈 Roadmap
- User authentication
+* **Yahoo Finance**
+* **Bloomberg Terminal**
+* **FinViz**
 
- Live news and sentiment analysis
+---
 
- Interactive price charts and fundamentals
+## 📈 Roadmap
 
- Sector/peer comparison
+* ✅ User authentication
+* ✅ Live news aggregation + sentiment analysis
+* ✅ Interactive stock price charts and fundamentals
+* ✅ Sector/peer sentiment comparison
+* ✅ AI-generated summaries & risk insights
+* 🔜 User watchlists & alerts
+* 🔜 Dark mode toggle
+* 🔜 More advanced charting & data sources
 
- AI-generated summaries and trend/risk insights
+---
 
- User watchlists and alerts (coming soon!)
+## 🤝 Contributing
 
- Dark mode toggle (coming soon!)
+Pull requests are welcome!
+Please open an issue first to discuss major changes.
 
- More advanced charting and news sources (coming soon!)
+---
 
-🤝 Contributing
-Pull requests and suggestions are welcome!
-Please open an issue to discuss what you’d like to change.
+## 📄 License
 
-📄 License
-This project is licensed under the MIT License.
+Licensed under the [MIT License](LICENSE).
 
-🙏 Acknowledgements
-HuggingFace Transformers
+---
 
-NLTK
+## 🙏 Acknowledgements
 
-Plotly
+* HuggingFace Transformers
+* NLTK
+* Plotly
+* Bootstrap
+* Animate.css
+* Yahoo Finance (UI inspiration)
 
-Bootstrap
+---
 
-Animate.css
+> Built with ❤️ by **Jyotiraditya**
 
-Yahoo Finance (UI inspiration)
+---
 
-Built with ❤️ by Jyotiraditya
+Let me know if you'd like a PDF or styled HTML version as well!
