@@ -77,9 +77,9 @@ A modern, interactive web dashboard for financial news analysis, powered by stat
 
 ## 📸 Screenshots
 
-![Screenshot 1](https://github.com/user-attachments/assets/a17b4427-099d-49a6-86c0-63dbed5fd4a3)
-![Screenshot 2](https://github.com/user-attachments/assets/0721cd9e-9d40-4234-9244-b3014c3487e6)
-![Screenshot 3](https://github.com/user-attachments/assets/d37a6ed8-e9ae-4a04-a725-a27f50b01ee1)
+![image](https://github.com/user-attachments/assets/b5239ed8-4f0c-4170-a978-dc4d24e10b19)
+![image](https://github.com/user-attachments/assets/9bc63b1e-275c-4dfa-875d-7643aa01b901)
+![image](https://github.com/user-attachments/assets/0e13f8d7-95e2-4811-bf1b-d837cd3e2ec8)
 
 ---
 
