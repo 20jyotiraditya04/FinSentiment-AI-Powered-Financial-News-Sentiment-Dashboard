@@ -1,18 +1,44 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1 class="animate__animated animate__fadeIn">Live News Sentiment Dashboard</h1>
+<h1 class="animate__animated animate__fadeIn mb-4" style="font-weight:700;letter-spacing:1px;">Live News Sentiment Dashboard</h1>
+
+<!-- Add Ticker Search and Filters -->
+<div class="card p-3 mb-4 animate__animated animate__fadeInLeft shadow-sm">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-3 col-12">
+      <label class="form-label fw-semibold">Ticker</label>
+      <input type="text" name="ticker" class="form-control" placeholder="Ticker (e.g. AAPL)" value="{{ ticker }}">
+    </div>
+    <div class="col-md-3 col-6">
+      <label class="form-label fw-semibold">Sentiment</label>
+      <select name="sentiment" class="form-select">
+        <option value="">All Sentiments</option>
+        <option value="Positive" {% if request.args.get('sentiment') == 'Positive' %}selected{% endif %}>Positive</option>
+        <option value="Negative" {% if request.args.get('sentiment') == 'Negative' %}selected{% endif %}>Negative</option>
+        <option value="Neutral" {% if request.args.get('sentiment') == 'Neutral' %}selected{% endif %}>Neutral</option>
+      </select>
+    </div>
+    <div class="col-md-3 col-6">
+      <label class="form-label fw-semibold">Keyword</label>
+      <input type="text" name="keyword" class="form-control" placeholder="Keyword" value="{{ request.args.get('keyword', '') }}">
+    </div>
+    <div class="col-md-3 col-12 d-grid">
+      <button type="submit" class="btn btn-primary btn-lg">Show</button>
+    </div>
+  </form>
+</div>
 
 <!-- AI-Powered News Summary -->
 {% if summary_text %}
-<div class="alert alert-info my-4 animate__animated animate__fadeIn">
+<div class="alert alert-info my-4 animate__animated animate__fadeIn shadow-sm">
     <strong>AI Summary:</strong> {{ summary_text }}
 </div>
 {% endif %}
 
 <!-- AI-Generated Trend & Risk Insights -->
 {% if trend_risk_insights %}
-<div class="alert alert-warning my-4 animate__animated animate__fadeIn">
+<div class="alert alert-warning my-4 animate__animated animate__fadeIn shadow-sm">
     <strong>AI-Generated Trend & Risk Insights:</strong>
     <ul>
         {% for bullet in trend_risk_insights.split('\n') %}
@@ -24,71 +50,84 @@
 </div>
 {% endif %}
 
-<!-- Sector/Ticker Sentiment Comparison -->
-{% if sector and sector_avg_sentiment is not none and ticker_avg_sentiment is not none %}
-<div class="alert alert-secondary my-3 animate__animated animate__fadeIn">
-  <strong>Sector:</strong> {{ sector }}<br>
-  <strong>{{ ticker }} average sentiment:</strong> {{ ticker_avg_sentiment|round(2) }}<br>
-  <strong>Sector average sentiment:</strong> {{ sector_avg_sentiment|round(2) }}<br>
-  {% if ticker_avg_sentiment > sector_avg_sentiment %}
-    <span class="text-success">This stock's sentiment is <b>above</b> sector average.</span>
-  {% elif ticker_avg_sentiment < sector_avg_sentiment %}
-    <span class="text-danger">This stock's sentiment is <b>below</b> sector average.</span>
-  {% else %}
-    <span class="text-warning">This stock's sentiment is <b>equal</b> to the sector average.</span>
-  {% endif %}
+<!-- Conclusion Section -->
+<div class="alert alert-success my-4 animate__animated animate__fadeIn shadow-sm">
+    <strong>Conclusion:</strong>
+    {% if avg_sentiment > 0.05 %}
+        Recent news is mostly <b>positive</b> and may have contributed to a price increase in {{ ticker }}.
+    {% elif avg_sentiment < -0.05 %}
+        Recent news is mostly <b>negative</b> and may have contributed to a price decrease in {{ ticker }}.
+    {% else %}
+        Recent news is <b>neutral</b> and does not show a strong effect on {{ ticker }}'s price.
+    {% endif %}
 </div>
-{% endif %}
-
-<!-- Ticker Selector and Filters -->
-<form method="get" class="row g-3 animate__animated animate__fadeInLeft">
-  <div class="col-auto">
-    <input type="text" name="ticker" class="form-control" placeholder="Ticker (e.g. AAPL)" value="{{ ticker }}">
-  </div>
-  <div class="col-auto">
-    <select name="sentiment" class="form-select">
-      <option value="">All Sentiments</option>
-      <option value="Positive" {% if request.args.get('sentiment') == 'Positive' %}selected{% endif %}>Positive</option>
-      <option value="Negative" {% if request.args.get('sentiment') == 'Negative' %}selected{% endif %}>Negative</option>
-      <option value="Neutral" {% if request.args.get('sentiment') == 'Neutral' %}selected{% endif %}>Neutral</option>
-    </select>
-  </div>
-  <div class="col-auto">
-    <input type="text" name="keyword" class="form-control" placeholder="Keyword" value="{{ request.args.get('keyword', '') }}">
-  </div>
-  <div class="col-auto">
-    <button type="submit" class="btn btn-primary mb-3">Show</button>
-  </div>
-</form>
 
 <!-- Stock Fundamentals Card -->
-<div class="card my-4 animate__animated animate__fadeIn">
+<div class="card my-4 animate__animated animate__fadeIn shadow-sm">
   <div class="card-body">
-    <h5 class="card-title">{{ fundamentals.longName }} ({{ ticker }})</h5>
-    <p class="card-text">
-      <strong>Sector:</strong> {{ fundamentals.sector }}<br>
-      <strong>Industry:</strong> {{ fundamentals.industry }}<br>
-      <strong>Market Cap:</strong> {{ fundamentals.marketCap }}<br>
-      <strong>P/E (Trailing):</strong> {{ fundamentals.trailingPE }}<br>
-      <strong>P/E (Forward):</strong> {{ fundamentals.forwardPE }}<br>
-      <strong>Open:</strong> {{ fundamentals.open }} |
-      <strong>High:</strong> {{ fundamentals.high }} |
-      <strong>Low:</strong> {{ fundamentals.low }} |
-      <strong>Prev Close:</strong> {{ fundamentals.previousClose }}
-    </p>
+    <h5 class="card-title mb-2" style="font-weight:600;">{{ fundamentals.longName }} ({{ ticker }})</h5>
+    <div class="row">
+      <div class="col-md-6">
+        <p class="card-text mb-1">
+          <strong>Sector:</strong> {{ fundamentals.sector }}<br>
+          <strong>Industry:</strong> {{ fundamentals.industry }}<br>
+          <strong>Market Cap:</strong> {{ fundamentals.marketCap }}<br>
+          <strong>P/E (Trailing):</strong> {{ fundamentals.trailingPE }}<br>
+          <strong>P/E (Forward):</strong> {{ fundamentals.forwardPE }}
+        </p>
+      </div>
+      <div class="col-md-6">
+        <p class="card-text mb-1">
+          <strong>Open:</strong> {{ fundamentals.open }}<br>
+          <strong>High:</strong> {{ fundamentals.high }}<br>
+          <strong>Low:</strong> {{ fundamentals.low }}<br>
+          <strong>Prev Close:</strong> {{ fundamentals.previousClose }}
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Interactive Price Chart -->
-<div id="stockPriceChart" style="width: 100%; max-width: 700px; margin: 0 auto 40px auto;"></div>
+<!-- Interactive Price Chart with News Markers -->
+<div class="card mb-4 p-3 animate__animated animate__fadeIn shadow-sm">
+  <h5 class="mb-3 fw-semibold">5-Year Stock Price Chart</h5>
+  <div id="stockPriceChart" style="width: 100%; max-width: 700px; margin: 0 auto;"></div>
+</div>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
     var priceChart = {{ price_chart_json|safe }};
-    Plotly.newPlot('stockPriceChart', priceChart.data, priceChart.layout);
+    var newsMarkers = [
+        {% for row in records %}
+            {% if row.pubDate %}
+            {
+                x: "{{ row.pubDate[:10] }}",
+                y: null,
+                text: "{{ row.headline|e }}",
+                marker: { color: "#ff5c5c", size: 10 },
+                mode: "markers+text",
+                type: "scatter",
+                name: "News",
+                textposition: "top center"
+            },
+            {% endif %}
+        {% endfor %}
+    ];
+    if (priceChart) {
+      // Optionally add news markers to the chart
+      var data = priceChart.data;
+      // You could add markers at the closest price point for each news
+      // For simplicity, we skip y assignment here
+      Plotly.newPlot('stockPriceChart', data, priceChart.layout, {responsive: true});
+    } else {
+      document.getElementById('stockPriceChart').innerHTML = "<div class='alert alert-warning'>No price data available for this ticker.</div>";
+    }
 </script>
 
 <!-- Sentiment Pie Chart -->
-<div id="sentimentPie" class="animate__animated animate__zoomIn" style="width: 100%; max-width: 500px; margin: 0 auto 40px auto;"></div>
+<div class="card mb-4 p-3 animate__animated animate__zoomIn shadow-sm">
+  <h5 class="mb-3 fw-semibold">Sentiment Distribution</h5>
+  <div id="sentimentPie" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+</div>
 <script>
     var data = [{
         values: [
@@ -97,74 +136,94 @@
             {{ sentiment_counts["Neutral"] if "Neutral" in sentiment_counts else 0 }}
         ],
         labels: ['Positive', 'Negative', 'Neutral'],
-        type: 'pie'
+        marker: {colors: ['#4f8cff', '#ff5c5c', '#ffd966']},
+        type: 'pie',
+        textinfo: 'label+percent',
+        hole: 0.3
     }];
     var layout = {
-        title: 'Sentiment Distribution',
-        height: 400
+        title: '',
+        height: 350,
+        showlegend: true
     };
-    Plotly.newPlot('sentimentPie', data, layout);
+    Plotly.newPlot('sentimentPie', data, layout, {responsive: true});
 </script>
 
 <!-- Sentiment Alert -->
 {% if sentiment_counts['Negative'] > (sentiment_counts['Positive'] + sentiment_counts['Neutral']) %}
-<div class="alert alert-danger text-center animate__animated animate__shakeX" role="alert">
+<div class="alert alert-danger text-center animate__animated animate__shakeX shadow-sm" role="alert">
     Warning: Negative sentiment is dominating the news!
 </div>
 {% endif %}
 
-<!-- News Table -->
-<div class="container mt-4 table-responsive">
-    <table class="table table-bordered table-hover table-striped align-middle animate__animated animate__fadeInUp">
-        <thead class="table-dark">
-            <tr>
-                {% for col in columns %}
-                    {% if col not in ['row_class', 'entities', 'keywords', 'pos', 'neu', 'neg'] %}
-                        <th>{{ col.replace('_', ' ').title() }}</th>
-                    {% endif %}
-                {% endfor %}
-                <th>Entities</th>
-                <th>Keywords</th>
-                <th>Sentiment Confidence</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in records %}
-            <tr class="animate__animated animate__fadeIn {{ row['row_class'] }}">
-                {% for col in columns %}
-                    {% if col not in ['row_class', 'entities', 'keywords', 'pos', 'neu', 'neg'] %}
-                        <td>{{ row[col] }}</td>
-                    {% endif %}
-                {% endfor %}
-                <td>
-                    {% for ent in row.get('entities', []) %}
-                        {{ ent[0] }} ({{ ent[1] }}){% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for kw in row.get('keywords', []) %}
-                        {{ kw }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar"
-                             style="width: {{ (row['pos']*100)|round(1) }}%">
-                            {{ (row['pos']*100)|round(1) }}%
-                        </div>
-                        <div class="progress-bar bg-warning" role="progressbar"
-                             style="width: {{ (row['neu']*100)|round(1) }}%">
-                            {{ (row['neu']*100)|round(1) }}%
-                        </div>
-                        <div class="progress-bar bg-danger" role="progressbar"
-                             style="width: {{ (row['neg']*100)|round(1) }}%">
-                            {{ (row['neg']*100)|round(1) }}%
-                        </div>
+<!-- News Cards Section -->
+<div class="row row-cols-1 row-cols-md-2 g-4 mt-4 mb-5">
+    {% for row in records %}
+    <div class="col">
+        <div class="card h-100 shadow-sm animate__animated animate__fadeIn">
+            {% if row.image_url %}
+            <img src="{{ row.image_url }}" class="card-img-top" alt="News Image" style="object-fit:cover;max-height:180px;">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ row.headline }}</h5>
+                <p class="card-text">
+                    <span class="badge 
+                        {% if row.sentiment_label == 'Positive' %}bg-success
+                        {% elif row.sentiment_label == 'Negative' %}bg-danger
+                        {% else %}bg-secondary{% endif %}">
+                        {{ row.sentiment_label }}
+                    </span>
+                    <small class="text-muted ms-2">{{ row.pubDate[:10] if row.pubDate }}</small>
+                </p>
+                <div>
+                    <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                        Show Full News
+                    </button>
+                    <div class="collapse mt-2" id="collapse{{ loop.index }}">
+                        <p class="card-text">{{ row.content or "No additional content available." }}</p>
                     </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <small class="text-muted">Source: {{ row.source }}</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
+
+{# 
+{% for ent in row.get('entities', []) %}
+    {{ ent[0] }} ({{ ent[1] }}){% if not loop.last %}, {% endif %}
+{% endfor %}
+</td>
+<td>
+    {% for kw in row.get('keywords', []) %}
+        {{ kw }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+</td>
+<td>
+    <div class="progress" style="height: 22px;">
+        <div class="progress-bar bg-success" role="progressbar"
+             style="width: {{ (row['pos']*100)|round(1) }}%">
+            {{ (row['pos']*100)|round(1) }}%
+        </div>
+        <div class="progress-bar bg-warning" role="progressbar"
+             style="width: {{ (row['neu']*100)|round(1) }}%">
+            {{ (row['neu']*100)|round(1) }}%
+        </div>
+        <div class="progress-bar bg-danger" role="progressbar"
+             style="width: {{ (row['neg']*100)|round(1) }}%">
+            {{ (row['neg']*100)|round(1) }}%
+        </div>
+    </div>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{% endblock %}
+#}

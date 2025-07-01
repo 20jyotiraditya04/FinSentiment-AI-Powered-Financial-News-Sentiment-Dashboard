@@ -15,6 +15,9 @@ def fetch_news():
             if isinstance(article, dict):
                 news_list.append({
                     'headline': article.get('title', ''),
-                    'source': article.get('source_id', 'NewsData.io')
+                    'source': article.get('source_id', 'NewsData.io'),
+                    'content': article.get('content', ''),  # Full news content if available
+                    'image_url': article.get('image_url', ''),  # Image URL if available
+                    'pubDate': article.get('pubDate', '')  # Publication date
                 })
     return news_list

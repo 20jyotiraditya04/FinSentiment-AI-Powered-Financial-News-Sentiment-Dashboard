@@ -108,16 +108,24 @@ def dashboard():
     else:
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=hist.index, 
-            y=hist['Close'], 
-            mode='lines', 
-            name='Close Price'
+            x=hist.index,
+            y=hist['Close'],
+            mode='lines',
+            name='Close Price',
+            line=dict(color='#4f8cff', width=3)
         ))
         fig.update_layout(
-            title=f'Historical Price Chart ({ticker}, 5 Years)', 
-            yaxis_title='Price', 
-            xaxis_title='Date', 
-            height=400
+            title=f'Historical Price Chart ({ticker}, 5 Years)',
+            yaxis_title='Price',
+            xaxis_title='Date',
+            height=400,
+            plot_bgcolor='#f8fafc',
+            paper_bgcolor='#fff',
+            font=dict(family='Inter, Arial, sans-serif', size=14),
+            margin=dict(l=40, r=40, t=50, b=40),
+            hovermode='x unified',
+            xaxis=dict(showgrid=True, gridcolor='#e3e9f7'),
+            yaxis=dict(showgrid=True, gridcolor='#e3e9f7')
         )
         price_chart_json = fig.to_json()
 
@@ -142,7 +150,8 @@ def dashboard():
         price_chart_json=price_chart_json,
         sector=sector,
         sector_avg_sentiment=sector_avg_sentiment,
-        ticker_avg_sentiment=ticker_avg_sentiment
+        ticker_avg_sentiment=ticker_avg_sentiment,
+        avg_sentiment=avg_sentiment if total > 0 else 0  # Pass avg_sentiment for conclusion
     )
 
 @app.route('/register', methods=['GET', 'POST'])
