@@ -106,10 +106,15 @@ def dashboard():
         flash(f"No historical data available for {ticker}.", 'warning')
         price_chart_json = None
     else:
+        # Ensure index is datetime and sorted
+        hist = hist.sort_index()
+        hist = hist[hist['Close'].notnull()]
+        x_dates = hist.index.strftime('%Y-%m-%d').tolist()
+        y_close = hist['Close'].tolist()
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=hist.index,
-            y=hist['Close'],
+            x=x_dates,
+            y=y_close,
             mode='lines',
             name='Close Price',
             line=dict(color='#4f8cff', width=3)
