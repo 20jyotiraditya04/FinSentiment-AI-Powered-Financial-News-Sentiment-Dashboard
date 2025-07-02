@@ -1,4 +1,3 @@
-
 ---
 
 # 💹 FinSentiment: AI-Powered Financial News Sentiment Dashboard
@@ -219,6 +218,26 @@ Licensed under the [MIT License](LICENSE).
 ---
 
 > Built with ❤️ by **Jyotiraditya**
+
+---
+
+## 📝 Project Overview
+
+**FinSentiment** is an AI-powered web dashboard for analyzing financial news and stock sentiment.  
+Key features include:
+
+- **User Authentication:** Secure registration and login for personalized dashboards.
+- **Live News Aggregation:** Fetches the latest financial/business news headlines.
+- **NLP Enrichment:** Extracts entities and keywords from news using spaCy.
+- **Sentiment Analysis:** Uses NLTK VADER and FinBERT to analyze news sentiment (positive/negative/neutral).
+- **AI Summaries & Insights:** Generates concise news summaries and trend/risk insights using transformer models.
+- **Stock Data Visualization:** Displays interactive 5-year stock price charts and key fundamentals using yfinance and Plotly.
+- **Sector Comparison:** Compares sentiment of selected stock with its sector peers.
+- **Filtering:** Allows filtering news by ticker, sentiment, and keyword.
+- **Per-News Insights:** For each news, shows summary, affected stocks, conclusion, and actionable advice.
+- **Modern UI:** Responsive, animated interface using Bootstrap 5 and Animate.css.
+
+The project combines real-time data, NLP, and AI to help users quickly understand market sentiment and make informed decisions.
 
 ---
 

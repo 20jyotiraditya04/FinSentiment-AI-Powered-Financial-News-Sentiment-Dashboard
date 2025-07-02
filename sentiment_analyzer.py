@@ -4,6 +4,8 @@ import nltk
 # Ensure the VADER lexicon is downloaded (run once)
 nltk.download('vader_lexicon', quiet=True)
 
+# NOTE: This file is not used if FinBERT is used for sentiment analysis in the backend.
+
 def analyze_sentiment(news_list):
     """
     Adds sentiment scores and labels to each news dict in the list.

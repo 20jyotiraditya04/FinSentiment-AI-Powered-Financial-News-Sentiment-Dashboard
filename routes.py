@@ -20,6 +20,10 @@ import plotly.graph_objs as go
 
 # Add this import for the transformers pipeline
 from transformers import pipeline
+import re
+
+# Import FinBERT sentiment analysis
+from finbert_analyzer import analyze_sentiment_finbert
 
 # Initialize the summarizer at module level for efficiency
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
@@ -39,6 +43,65 @@ def generate_trend_risk_insights(headlines):
     summary = summarizer(full_input, max_length=99, min_length=50, do_sample=False)[0]['summary_text']
     return summary
 
+def extract_affected_tickers(entities, known_tickers):
+    """
+    Given a list of entities and a set of known tickers, return a list of tickers mentioned in the news.
+    """
+    affected = []
+    for ent_text, ent_label in entities:
+        if ent_text.upper() in known_tickers:
+            affected.append(ent_text.upper())
+    return affected
+
+def extract_affected_tickers_from_text(text, known_tickers):
+    """
+    Extract tickers from any word in the text that matches a known ticker.
+    """
+    words = set(re.findall(r'\b[A-Z]{2,5}\b', text.upper()))
+    return list(words & known_tickers)
+
+def generate_financial_advice(sentiment_label, affected_tickers):
+    """
+    Generate a simple financial advice string based on sentiment and affected tickers.
+    """
+    if not affected_tickers:
+        return ""
+    tickers_str = ", ".join(affected_tickers)
+    if sentiment_label == "Positive":
+        return f"Consider monitoring or investing in {tickers_str} as the news sentiment is positive."
+    elif sentiment_label == "Negative":
+        return f"Exercise caution with {tickers_str}; recent news sentiment is negative."
+    else:
+        return f"Stay updated on {tickers_str}; news sentiment is neutral."
+
+def generate_news_summary(headline, content):
+    """Generate a short summary for a single news item."""
+    text = headline
+    if content:
+        text += " " + content
+    # Use a short summary for each news
+    try:
+        # Dynamically set max_length to be less than input length for short texts
+        input_length = len(text.split())
+        max_length = max(10, min(40, input_length - 1))  # never more than input_length-1, min 10
+        min_length = max(5, min(15, input_length // 2))
+        summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)[0]['summary_text']
+    except Exception:
+        summary = headline  # fallback
+    return summary
+
+def generate_news_conclusion(sentiment_label, affected_tickers):
+    """Generate a simple conclusion for a news item."""
+    if not affected_tickers:
+        return "This news does not mention a specific tracked stock."
+    tickers_str = ", ".join(affected_tickers)
+    if sentiment_label == "Positive":
+        return f"This news is likely to have a positive impact on {tickers_str}."
+    elif sentiment_label == "Negative":
+        return f"This news may negatively affect {tickers_str}."
+    else:
+        return f"This news is neutral for {tickers_str}."
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -51,7 +114,14 @@ def dashboard():
     news = deduplicate(news)
     news = add_entities(news)
     news = extract_keywords(news)
-    news_with_sentiment = analyze_sentiment(news)
+    news_with_sentiment = analyze_sentiment_finbert(news)  # Use FinBERT for sentiment analysis
+
+    # Gather all known tickers for entity matching
+    from stock_data import sector_tickers
+    all_known_tickers = set()
+    for tickers in sector_tickers.values():
+        all_known_tickers.update(tickers)
+    all_known_tickers.add(ticker)
 
     sentiment_filter = request.args.get('sentiment')
     keyword_filter = request.args.get('keyword', '').lower()
@@ -62,8 +132,28 @@ def dashboard():
             continue
         if keyword_filter and keyword_filter not in item['headline'].lower():
             continue
+        # Extract affected tickers from headline and content
+        headline = item.get('headline', '')
+        content = item.get('content', '')
+        affected = extract_affected_tickers_from_text(headline + " " + content, all_known_tickers)
+        item['affected_tickers'] = affected
+        # Generate financial advice for this news
+        item['financial_advice'] = generate_financial_advice(item['sentiment_label'], affected)
+        # Generate per-news summary and conclusion
+        item['summary'] = generate_news_summary(item['headline'], content)
+        item['conclusion'] = generate_news_conclusion(item['sentiment_label'], affected)
+        item['advice'] = item['financial_advice']
         filtered_news.append(item)
     if not sentiment_filter and not keyword_filter:
+        for item in news_with_sentiment:
+            headline = item.get('headline', '')
+            content = item.get('content', '')
+            affected = extract_affected_tickers_from_text(headline + " " + content, all_known_tickers)
+            item['affected_tickers'] = affected
+            item['financial_advice'] = generate_financial_advice(item['sentiment_label'], affected)
+            item['summary'] = generate_news_summary(item['headline'], content)
+            item['conclusion'] = generate_news_conclusion(item['sentiment_label'], affected)
+            item['advice'] = item['financial_advice']
         filtered_news = news_with_sentiment
 
     columns = [col for col in filtered_news[0].keys() if col != 'row_class'] if filtered_news else []

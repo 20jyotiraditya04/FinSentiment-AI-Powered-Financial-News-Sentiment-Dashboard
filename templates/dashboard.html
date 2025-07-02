@@ -136,17 +136,36 @@
             {{ sentiment_counts["Neutral"] if "Neutral" in sentiment_counts else 0 }}
         ],
         labels: ['Positive', 'Negative', 'Neutral'],
-        marker: {colors: ['#4f8cff', '#ff5c5c', '#ffd966']},
+        marker: {
+            colors: ['#27ae60', '#e74c3c', '#f1c40f'],
+            line: {color: '#fff', width: 3}
+        },
         type: 'pie',
-        textinfo: 'label+percent',
-        hole: 0.3
+        textinfo: 'label+percent+value',
+        textfont: {size: 18, family: 'Inter, Arial, sans-serif'},
+        hole: 0.5,
+        pull: [0.08, 0.08, 0.08],
+        hoverinfo: 'label+percent+value'
     }];
     var layout = {
-        title: '',
-        height: 350,
-        showlegend: true
+        title: {
+            text: 'News Sentiment Breakdown',
+            font: {size: 22, family: 'Inter, Arial, sans-serif', color: '#222'}
+        },
+        height: 390,
+        showlegend: true,
+        legend: {
+            orientation: 'h',
+            x: 0.5,
+            xanchor: 'center',
+            y: -0.18,
+            font: {size: 16}
+        },
+        paper_bgcolor: '#f8fafc',
+        plot_bgcolor: '#f8fafc',
+        margin: {t: 70, b: 40, l: 20, r: 20}
     };
-    Plotly.newPlot('sentimentPie', data, layout, {responsive: true});
+    Plotly.newPlot('sentimentPie', data, layout, {responsive: true, displayModeBar: false});
 </script>
 
 <!-- Sentiment Alert -->
@@ -175,6 +194,28 @@
                     </span>
                     <small class="text-muted ms-2">{{ row.pubDate[:10] if row.pubDate }}</small>
                 </p>
+                <!-- News Summary, Conclusion, and Advice for each news -->
+                {% if row.summary %}
+                <div class="mb-2">
+                    <strong>Summary:</strong> {{ row.summary }}
+                </div>
+                {% endif %}
+                {% if row.affected_tickers %}
+                <div class="mb-2">
+                    <strong>Affected Stocks:</strong>
+                    {{ row.affected_tickers | join(', ') }}
+                </div>
+                {% endif %}
+                {% if row.conclusion %}
+                <div class="mb-2">
+                    <strong>Conclusion:</strong> {{ row.conclusion }}
+                </div>
+                {% endif %}
+                {% if row.advice %}
+                <div class="alert alert-info py-2 px-3 mb-2">
+                    <strong>Advice:</strong> {{ row.advice }}
+                </div>
+                {% endif %}
                 <div>
                     <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
                         Show Full News

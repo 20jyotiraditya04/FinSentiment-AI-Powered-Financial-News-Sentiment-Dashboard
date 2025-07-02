@@ -43,3 +43,5 @@ def analyze_sentiment_finbert(news_list):
             item['row_class'] = 'table-secondary'
     
     return news_list
+
+# Already uses FinBERT for sentiment analysis.
